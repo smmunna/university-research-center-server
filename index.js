@@ -37,10 +37,27 @@ async function run() {
         // -----------------------------------------------------------------------------------------------------------------
 
 
+        // Update Specific user data;
+        app.patch('/user', async (req, res) => {
+            const filter = { email: req.body.email }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    phone: req.body.phone,
+                    birthday: req.body.birthday,
+                    address1: req.body.address1,
+                    address2: req.body.address2,
+                    bio: req.body.bio,
+                },
+            };
+
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
 
         // Get one specific user based on the email;
-        app.get('/user',async(req,res)=>{
-            const query = {email:req.query.email};
+        app.get('/user', async (req, res) => {
+            const query = { email: req.query.email };
             const result = await usersCollection.findOne(query)
             res.send(result)
         })
