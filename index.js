@@ -33,9 +33,17 @@ async function run() {
         const usersCollection = database.collection("users");
         const allpapersCollection = database.collection("allpapers");
 
-        // Write down all of your routes 
+        // Write down all of your routes
         // -----------------------------------------------------------------------------------------------------------------
 
+
+
+        // Get one specific user based on the email;
+        app.get('/user',async(req,res)=>{
+            const query = {email:req.query.email};
+            const result = await usersCollection.findOne(query)
+            res.send(result)
+        })
         // creating new user;
         app.post('/users', async (req, res) => {
             const users = req.body
