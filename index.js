@@ -37,6 +37,25 @@ async function run() {
         // -----------------------------------------------------------------------------------------------------------------
 
 
+        // Pagination for all Papers;
+
+        app.get('/totalProducts', async (req, res) => {
+            const result = await allpapersCollection.estimatedDocumentCount();
+            res.send({ totalProducts: result })
+        })
+
+        app.get('/products', async (req, res) => {
+            console.log(req.query)
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 5;
+            const skip = page * limit;
+            const result = await allpapersCollection.find().skip(skip).limit(limit).toArray()
+            res.send(result)
+        })
+
+
+        // End of Pagination
+
         // Update Specific user data;
         app.patch('/user', async (req, res) => {
             const filter = { email: req.body.email }
