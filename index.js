@@ -37,6 +37,20 @@ async function run() {
         // -----------------------------------------------------------------------------------------------------------------
 
 
+        // Getting the Data Categorywise;
+        app.get('/category', async (req, res) => {
+            const query = { category: req.query.category }
+            if (req.query.category == 'all') {
+                const result = await allpapersCollection.find().toArray()
+                res.send(result)
+            }
+            else {
+                const result = await allpapersCollection.find(query).toArray()
+                res.send(result)
+            }
+        })
+
+
         // Pagination for all Papers;
 
         app.get('/totalProducts', async (req, res) => {
@@ -45,7 +59,6 @@ async function run() {
         })
 
         app.get('/products', async (req, res) => {
-            console.log(req.query)
             const page = parseInt(req.query.page) || 0;
             const limit = parseInt(req.query.limit) || 5;
             const skip = page * limit;
