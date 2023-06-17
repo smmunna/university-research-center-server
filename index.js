@@ -37,6 +37,14 @@ async function run() {
         // -----------------------------------------------------------------------------------------------------------------
 
 
+        // Search Papers;
+        // Search by name
+        app.get('/searchpaper', async (req, res) => {
+            const searchQuery = req.query.title
+            const regexPattern = new RegExp(searchQuery, 'i')
+            const result = await allpapersCollection.find({ title: regexPattern }).toArray()
+            res.send(result)
+        })
         
         // Getting the recent papers;
         app.get('/recentpaper',async(req,res)=>{
