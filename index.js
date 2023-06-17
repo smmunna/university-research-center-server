@@ -38,6 +38,11 @@ async function run() {
 
 
         
+        // Getting the recent papers;
+        app.get('/recentpaper',async(req,res)=>{
+            const result = await allpapersCollection.find().sort({published_date:-1}).toArray()
+            res.send(result)
+        })
 
         // Getting the Data Categorywise;
         app.get('/category', async (req, res) => {
