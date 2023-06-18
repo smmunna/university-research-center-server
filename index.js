@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const port = process.env.PORT || 5000
 
@@ -24,6 +25,27 @@ const client = new MongoClient(uri, {
     }
 });
 
+// --------------------------------------------------------------------------------------------
+// Verify User with Jwt token;
+const verifyJWT = (req, res, next) => {
+    const authorization = req.headers.authorization
+    // console.log(authorization)
+    if (!authorization) {
+        return res.send({ error: 'Error occured', message: "You can not access this." })
+    }
+    const token = authorization.split(' ')[1]
+    // console.log(token)
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decode) => {
+        if (error) {
+            return res.send({ error: 'Error occured', message: "You can not access this." })
+        }
+        req.decode = decode
+        next()
+    })
+}
+
+// -------------------------------------- ----- -------------------------------------------- -------
+
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7) [Before Hosting , we should delete this line]
@@ -36,6 +58,18 @@ async function run() {
         // Write down all of your routes
         // -----------------------------------------------------------------------------------------------------------------
 
+        // -------------------------------
+        // Jwt procedure for signin token;
+        app.post('/jwt', async (req, res) => {
+            const user = req.body.email;
+            const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1h'
+            })
+            res.send({ token })
+
+        })
+        // -------------------------------
+
 
         // Search Papers;
         // Search by name
@@ -45,10 +79,10 @@ async function run() {
             const result = await allpapersCollection.find({ title: regexPattern }).toArray()
             res.send(result)
         })
-        
+
         // Getting the recent papers;
-        app.get('/recentpaper',async(req,res)=>{
-            const result = await allpapersCollection.find().sort({published_date:-1}).toArray()
+        app.get('/recentpaper', async (req, res) => {
+            const result = await allpapersCollection.find().sort({ published_date: -1 }).toArray()
             res.send(result)
         })
 
@@ -103,8 +137,18 @@ async function run() {
         })
 
         // Get one specific user based on the email;
-        app.get('/user', async (req, res) => {
-            const query = { email: req.query.email };
+        app.get('/user', verifyJWT, async (req, res) => {
+            // Verifying the loggedin user
+            const decode = req.decode
+            if (decode.user !== req.query.email) {
+                res.status(403).send("Unauthorized access")
+            }
+
+            let query = {}
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+
             const result = await usersCollection.findOne(query)
             res.send(result)
         })
