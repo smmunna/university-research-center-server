@@ -167,6 +167,13 @@ async function run() {
             res.send([result])
         })
 
+        // Submit Paper by Students;
+        app.post('/allpapers', async (req, res) => {
+            const papersInfo = req.body
+            const result = await allpapersCollection.insertOne(papersInfo)
+            res.send(result)
+        })
+
         // Getting all the papers;
         app.get('/allpapers', async (req, res) => {
             const result = await allpapersCollection.find().toArray()
