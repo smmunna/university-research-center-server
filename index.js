@@ -139,6 +139,14 @@ async function run() {
         // End of Pagination
 
 
+        // Delete Users
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: id }
+            const result = await usersCollection.deleteOne(query)
+            res.send(result)
+        })
+
         // Change users Role;
         app.patch('/users', async (req, res) => {
             const filter = { email: req.body.emails }
