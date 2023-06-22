@@ -120,47 +120,6 @@ async function run() {
 
 
 
-        // Pagination for all users list;
-
-        app.get('/totalUsers', async (req, res) => {
-            const result = await usersCollection.estimatedDocumentCount();
-            res.send({ totalProducts: result })
-        })
-
-        app.get('/totausers', async (req, res) => {
-            const page = parseInt(req.query.page) || 0;
-            const limit = parseInt(req.query.limit) || 5;
-            const skip = page * limit;
-            const result = await usersCollection.find().skip(skip).limit(limit).toArray()
-            res.send(result)
-        })
-
-
-        // End of Pagination
-
-
-        // Delete Users
-        app.delete('/users/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: id }
-            const result = await usersCollection.deleteOne(query)
-            res.send(result)
-        })
-
-        // Change users Role;
-        app.patch('/users', async (req, res) => {
-            const filter = { email: req.body.emails }
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: {
-                    status: req.body.userstatus,
-                },
-            };
-
-            const result = await usersCollection.updateOne(filter, updateDoc, options)
-            res.send(result)
-        })
-
         // Update Specific user data;
         app.patch('/user', async (req, res) => {
             const filter = { email: req.body.email }
@@ -193,6 +152,29 @@ async function run() {
             }
 
             const result = await usersCollection.findOne(query)
+            res.send(result)
+        })
+
+        // Delete Users
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(query)
+            res.send(result)
+
+        })
+
+        // Change users Role;
+        app.patch('/users', async (req, res) => {
+            const filter = { email: req.body.emails }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    status: req.body.userstatus,
+                },
+            };
+
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
             res.send(result)
         })
 
