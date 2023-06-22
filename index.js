@@ -118,6 +118,27 @@ async function run() {
 
         // End of Pagination
 
+
+
+        // Pagination for all users list;
+
+        app.get('/totalUsers', async (req, res) => {
+            const result = await usersCollection.estimatedDocumentCount();
+            res.send({ totalProducts: result })
+        })
+
+        app.get('/totausers', async (req, res) => {
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 5;
+            const skip = page * limit;
+            const result = await usersCollection.find().skip(skip).limit(limit).toArray()
+            res.send(result)
+        })
+
+
+        // End of Pagination
+
+
         // Change users Role;
         app.patch('/users', async (req, res) => {
             const filter = { email: req.body.emails }
