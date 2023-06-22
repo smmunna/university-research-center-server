@@ -152,6 +152,12 @@ async function run() {
             const result = await usersCollection.findOne(query)
             res.send(result)
         })
+
+        // Find all the users
+        app.get('/users',async(req,res)=>{
+            const result = await usersCollection.find().toArray()
+            res.send(result)
+        })
         // creating new user;
         app.post('/users', async (req, res) => {
             const users = req.body
