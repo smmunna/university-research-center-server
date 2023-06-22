@@ -118,6 +118,20 @@ async function run() {
 
         // End of Pagination
 
+        // Change users Role;
+        app.patch('/users', async (req, res) => {
+            const filter = { email: req.body.emails }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    status: req.body.userstatus,
+                },
+            };
+
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
         // Update Specific user data;
         app.patch('/user', async (req, res) => {
             const filter = { email: req.body.email }
@@ -154,7 +168,7 @@ async function run() {
         })
 
         // Find all the users
-        app.get('/users',async(req,res)=>{
+        app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray()
             res.send(result)
         })
