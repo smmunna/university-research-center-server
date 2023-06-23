@@ -53,6 +53,7 @@ async function run() {
 
         const database = client.db("researchDB");
         const usersCollection = database.collection("users");
+        const savesCollection = database.collection("saves");
         const allpapersCollection = database.collection("allpapers");
 
         // Write down all of your routes
@@ -69,6 +70,27 @@ async function run() {
 
         })
         // -------------------------------
+
+        // Delete save item
+        app.delete('/saveitems/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await savesCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        // get saves items
+        app.get('/saveitems', async (req, res) => {
+            const query = { user_email: req.query.email }
+            const result = await savesCollection.find(query).toArray()
+            res.send(result)
+        })
+        // Saves Collection from user;
+        app.post('/saveitems', async (req, res) => {
+            const items = req.body;
+            const result = await savesCollection.insertOne(items)
+            res.send(result)
+        })
 
 
         // Search Papers;
