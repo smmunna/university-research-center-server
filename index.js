@@ -120,6 +120,7 @@ async function run() {
 
 
 
+
         // Update Specific user data;
         app.patch('/user', async (req, res) => {
             const filter = { email: req.body.email }
@@ -187,6 +188,28 @@ async function run() {
         app.post('/users', async (req, res) => {
             const users = req.body
             const result = await usersCollection.insertOne(users)
+            res.send(result)
+        })
+
+        // Unpublished to published a Paper ;
+        app.patch('/allpapers/unpublished/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    status: 'published',
+                },
+            };
+
+            const result = await allpapersCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
+        // Getting all unpublished paper;
+        app.get('/allpapers/unpublished', async (req, res) => {
+            const query = { status: 'unpublished' }
+            const result = await allpapersCollection.find(query).toArray()
             res.send(result)
         })
 
