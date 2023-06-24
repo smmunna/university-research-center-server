@@ -143,9 +143,9 @@ async function run() {
 
 
         // Calculating total User;
-        app.get('/totalUsers',async(req,res)=>{
+        app.get('/totalUsers', async (req, res) => {
             const result = await usersCollection.estimatedDocumentCount()
-            res.send({totalUser:result})
+            res.send({ totalUser: result })
         })
 
         // Update Specific user data;
