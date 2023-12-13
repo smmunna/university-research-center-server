@@ -11,10 +11,10 @@ app.use(express.json())
 
 
 //For using the MongoDB Cloud (online)
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rvrwrto.mongodb.net/?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rvrwrto.mongodb.net/?retryWrites=true&w=majority`;
 
 // For Running Locally
-// const uri = "mongodb://127.0.0.1:27017";
+const uri = "mongodb://127.0.0.1:27017";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -175,7 +175,7 @@ async function run() {
             }
 
             let query = {}
-            if (req.query?.email) {
+            if (req.query.email) {     // optional chaning changed here
                 query = { email: req.query.email }
             }
 
